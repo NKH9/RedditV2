@@ -1,26 +1,36 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Reddit.Dtos;
 using Reddit.Models;
+using Reddit.Repositories;
+using System.Drawing.Printing;
 
 namespace Reddit.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class Posts1Controller : ControllerBase
+    public class PostsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IPostsRepository _postsRepository;
 
-        public Posts1Controller(ApplicationDbContext context)
+        public PostsController(ApplicationDbContext context, IPostsRepository postsRepository)
         {
             _context = context;
+            _postsRepository = postsRepository;
         }
 
         // GET: api/Posts1
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Post>>> GetPosts()
+        public async Task<PagedList<Post>> GetPosts(
+            string? sortTearm,
+            bool? isAscending, int page = 1,
+            int pageSize = 3, string? searchTerm = null)
         {
-            return await _context.Posts.ToListAsync(); // .Include(p => p.Comments)
+            return await _postsRepository.GetPosts(page, pageSize, searchTerm, sortTearm, isAscending);
+
+           // return await _context.Posts.ToListAsync(); // .Include(p => p.Comments)
         }
 
         // GET: api/Posts1/5
