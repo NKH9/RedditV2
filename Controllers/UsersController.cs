@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Reddit;
+
 using Reddit.Dtos;
 using Reddit.Models;
+using Reddit.Repositories;
 
 namespace Reddit.Controllers
 {
@@ -16,19 +14,25 @@ namespace Reddit.Controllers
     public class UsersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IUsersRepository _UsersRepository;
 
-        public UsersController(ApplicationDbContext context)
+        public UsersController(ApplicationDbContext context, IUsersRepository UsersRepository)
         {
             _context = context;
+            _UsersRepository = UsersRepository;
         }
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<PagedList<User>> GetUsers(
+            string? sortKey,
+            string? SearchKey,
+            bool? isAscending=true,
+            int page = 1,
+            int pageSize = 3)
         {
-            return await _context.Users.ToListAsync();
+            return await _UsersRepository.GetUsers(page, pageSize, sortKey, SearchKey, isAscending);
         }
-
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
