@@ -11,7 +11,7 @@ builder.Services.AddControllers()
          options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
      });
 
-builder.Services.AddScoped<IUsersRepository, IUsersRepository>();
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
